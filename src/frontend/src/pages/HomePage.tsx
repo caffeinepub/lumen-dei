@@ -1,0 +1,445 @@
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { TemplateCategory } from "../backend";
+import type { CustomTemplate, PrebuiltTemplate } from "../backend";
+import { TemplateCard } from "../components/TemplateCard";
+import { FALLBACK_PREBUILT_TEMPLATES } from "../data/prebuiltTemplates";
+import {
+  useCustomTemplates,
+  useDeleteTemplate,
+  usePrebuiltTemplates,
+} from "../hooks/useQueries";
+
+const QUOTES = [
+  "Wrapped in love's quiet glow.",
+  "Light finds you, always.",
+  "Grace lives in the small moments.",
+  "Softly, beautifully, you bloom.",
+  "Golden hours were made for you.",
+  "There is magic in your stillness.",
+  "Every frame holds a love story.",
+  "You are the art and the artist.",
+  "Tenderness is your superpower.",
+  "Luminous inside and out.",
+  "Peace lives where beauty breathes.",
+  "Today, you are enough and more.",
+  "The world is softer with you in it.",
+  "You carry summer wherever you go.",
+  "Joy is the truest form of courage.",
+];
+
+function RotatingQuote() {
+  const [index, setIndex] = useState(() =>
+    Math.floor(Math.random() * QUOTES.length),
+  );
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % QUOTES.length);
+        setVisible(true);
+      }, 600);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    // REFINEMENT 2 — Full-width ornaments, larger quote scale, generous vertical air
+    <div className="max-w-7xl mx-auto px-6 py-10 sm:py-14">
+      <div className="flex flex-col items-center gap-5">
+        {/* Top ornamental rule — full width */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.9, delay: 0.5, ease: "easeOut" }}
+          className="flex items-center gap-4 w-full origin-center"
+        >
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-warm-gray/40 to-warm-gray/40" />
+          <svg
+            width="8"
+            height="8"
+            viewBox="0 0 8 8"
+            fill="currentColor"
+            className="text-ink/25 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="4" cy="4" r="4" />
+          </svg>
+          <svg
+            width="5"
+            height="5"
+            viewBox="0 0 5 5"
+            fill="currentColor"
+            className="text-ink/15 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="2.5" cy="2.5" r="2.5" />
+          </svg>
+          <svg
+            width="5"
+            height="5"
+            viewBox="0 0 5 5"
+            fill="currentColor"
+            className="text-ink/15 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="2.5" cy="2.5" r="2.5" />
+          </svg>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-warm-gray/40 to-warm-gray/40" />
+        </motion.div>
+
+        {/* Quote — significantly larger, Cormorant Garamond at its best */}
+        <div className="min-h-[3.5rem] sm:min-h-[4.5rem] flex items-center justify-center px-4">
+          <AnimatePresence mode="wait">
+            {visible && (
+              <motion.p
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="font-elegant text-3xl sm:text-4xl italic text-ink/55 text-center leading-snug tracking-wide max-w-2xl"
+              >
+                &ldquo;{QUOTES[index]}&rdquo;
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom ornamental rule */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.9, delay: 0.65, ease: "easeOut" }}
+          className="flex items-center gap-4 w-full origin-center"
+        >
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-warm-gray/40 to-warm-gray/40" />
+          <svg
+            width="5"
+            height="5"
+            viewBox="0 0 5 5"
+            fill="currentColor"
+            className="text-ink/15 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="2.5" cy="2.5" r="2.5" />
+          </svg>
+          <svg
+            width="5"
+            height="5"
+            viewBox="0 0 5 5"
+            fill="currentColor"
+            className="text-ink/15 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="2.5" cy="2.5" r="2.5" />
+          </svg>
+          <svg
+            width="8"
+            height="8"
+            viewBox="0 0 8 8"
+            fill="currentColor"
+            className="text-ink/25 flex-shrink-0"
+            aria-hidden="true"
+          >
+            <circle cx="4" cy="4" r="4" />
+          </svg>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-warm-gray/40 to-warm-gray/40" />
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+type Tab = "all" | "instagram" | "old_money" | "pastel" | "mine";
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "instagram", label: "Instagram" },
+  { id: "old_money", label: "Old Money" },
+  { id: "pastel", label: "✿ Pastel" },
+  { id: "mine", label: "My Templates" },
+];
+
+export function HomePage() {
+  const [activeTab, setActiveTab] = useState<Tab>("all");
+  const navigate = useNavigate();
+
+  const { data: prebuiltData, isLoading: prebuiltLoading } =
+    usePrebuiltTemplates();
+  const { data: customData, isLoading: customLoading } = useCustomTemplates();
+  const deleteMutation = useDeleteTemplate();
+
+  const prebuilt: PrebuiltTemplate[] =
+    prebuiltData && prebuiltData.length > 0
+      ? prebuiltData
+      : FALLBACK_PREBUILT_TEMPLATES;
+
+  const custom: CustomTemplate[] = customData || [];
+
+  const filteredPrebuilt = prebuilt.filter((t) => {
+    if (activeTab === "all") return true;
+    if (activeTab === "instagram")
+      return (
+        t.category === TemplateCategory.instagram &&
+        !t.thumbnailHint.startsWith("pastel-")
+      );
+    if (activeTab === "old_money")
+      return (
+        t.category === TemplateCategory.old_money &&
+        !t.thumbnailHint.startsWith("pastel-")
+      );
+    if (activeTab === "pastel") return t.thumbnailHint.startsWith("pastel-");
+    if (activeTab === "mine") return false;
+    return true;
+  });
+
+  const filteredCustom = custom.filter((t) => {
+    if (activeTab === "all") return true;
+    if (activeTab === "instagram")
+      return t.category === TemplateCategory.instagram;
+    if (activeTab === "old_money")
+      return t.category === TemplateCategory.old_money;
+    if (activeTab === "mine") return true;
+    return true;
+  });
+
+  const isLoading = prebuiltLoading || customLoading;
+
+  const handleDelete = (id: string) => {
+    if (confirm("Delete this template?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const allItems = [...filteredCustom, ...filteredPrebuilt];
+
+  return (
+    <main className="min-h-screen bg-ivory">
+      {/* ── Hero: dramatic scale + pastel accent ── */}
+      <section className="max-w-7xl mx-auto px-6 pt-16 pb-6 relative">
+        {/* Soft pastel bloom decoration */}
+        <div
+          className="absolute top-0 right-0 w-96 h-64 pointer-events-none opacity-30"
+          style={{
+            background:
+              "radial-gradient(ellipse at 80% 20%, oklch(0.88 0.07 350) 0%, transparent 70%)",
+          }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute bottom-0 left-0 w-72 h-48 pointer-events-none opacity-20"
+          style={{
+            background:
+              "radial-gradient(ellipse at 20% 80%, oklch(0.88 0.055 290) 0%, transparent 70%)",
+          }}
+          aria-hidden="true"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 relative"
+        >
+          <div>
+            {/* Refined label */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="font-ui text-[9px] tracking-[0.22em] text-mid-gray/70 uppercase mb-4"
+            >
+              Lumen Dei · Creative Studio
+            </motion.p>
+
+            {/* h1 */}
+            <h1 className="font-display text-6xl sm:text-7xl text-ink leading-[0.95] font-normal italic">
+              Your
+              <br />
+              <span className="not-italic font-semibold">Templates</span>
+            </h1>
+
+            <p className="font-elegant text-xl text-mid-gray/80 mt-4 leading-relaxed max-w-xs">
+              Curated aesthetics for the discerning creator
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 self-start sm:self-auto">
+            <motion.button
+              type="button"
+              onClick={() => navigate({ to: "/editor" })}
+              className="group flex items-center gap-2.5 border border-ink text-ink font-ui text-[10px] tracking-[0.18em] uppercase px-7 py-3.5 hover:bg-ink hover:text-ivory transition-all duration-300"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Plus
+                size={11}
+                className="group-hover:rotate-90 transition-transform duration-300"
+              />
+              📷 New Template
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={() => navigate({ to: "/photobooth" })}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="group flex items-center gap-2 border font-ui text-[10px] tracking-[0.14em] uppercase px-7 py-3 transition-all duration-300"
+              style={{
+                borderColor: "oklch(0.88 0.07 350 / 0.6)",
+                color: "oklch(0.5 0.12 350)",
+                backgroundColor: "oklch(0.92 0.055 5 / 0.3)",
+              }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              🎀 ~Bessy Booth~
+            </motion.button>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Rotating quote */}
+      <RotatingQuote />
+
+      {/* ── REFINEMENT 3 — Tab nav: section label + tighter grid ── */}
+      <section className="max-w-7xl mx-auto px-6">
+        {/* Section heading above tabs */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="flex items-center justify-between mb-0"
+        >
+          <div className="flex gap-0 border-b border-warm-gray/40 w-full">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative px-5 py-3.5 font-ui text-[10px] tracking-[0.16em] uppercase transition-colors duration-200 ${
+                  activeTab === tab.id
+                    ? "text-ink"
+                    : "text-mid-gray/60 hover:text-ink/70"
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="tab-indicator"
+                    className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-ink"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {tab.id === "mine" && custom.length > 0 && (
+                  <span className="ml-1.5 font-ui text-[8px] bg-ink text-ivory rounded-full w-4 h-4 inline-flex items-center justify-center">
+                    {custom.length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Grid */}
+      <section className="max-w-7xl mx-auto px-6 pt-6 pb-12">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="animate-spin text-mid-gray/50" size={18} />
+              <span className="font-ui text-[9px] tracking-[0.18em] text-mid-gray/40 uppercase">
+                Loading
+              </span>
+            </div>
+          </div>
+        ) : allItems.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-24 gap-5"
+          >
+            <div className="w-14 h-14 border border-warm-gray/30 flex items-center justify-center">
+              <span className="font-display text-xl text-warm-gray/40 italic">
+                L
+              </span>
+            </div>
+            <p className="font-elegant text-xl italic text-mid-gray/60">
+              {activeTab === "mine"
+                ? "No saved templates yet"
+                : "No templates found"}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/editor" })}
+              className="font-ui text-[9px] tracking-[0.18em] text-ink/40 hover:text-ink uppercase transition-colors border-b border-ink/20 hover:border-ink/60 pb-0.5"
+            >
+              Create your first template
+            </button>
+          </motion.div>
+        ) : (
+          <AnimatePresence mode="wait">
+            {/* Tighter gap, denser gallery feel */}
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"
+            >
+              {filteredCustom.map((t, i) => (
+                <TemplateCard
+                  key={t.id}
+                  template={t}
+                  type="custom"
+                  index={i}
+                  onDelete={handleDelete}
+                />
+              ))}
+              {filteredPrebuilt.map((t, i) => (
+                <TemplateCard
+                  key={t.id}
+                  template={t}
+                  type="prebuilt"
+                  index={filteredCustom.length + i}
+                />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
+      </section>
+
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto px-6 py-10 border-t border-warm-gray/20">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img
+              src="/assets/generated/lumen-dei-logo-transparent.dim_400x400.png"
+              alt="Lumen Dei"
+              className="w-7 h-7 object-contain opacity-70"
+            />
+            <span className="font-display text-[11px] text-mid-gray/60 tracking-widest italic">
+              Lumen Dei
+            </span>
+          </div>
+          <p className="font-ui text-[9px] tracking-[0.16em] text-mid-gray/40 uppercase">
+            © {new Date().getFullYear()}.{" "}
+            <a
+              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-mid-gray/70 transition-colors"
+            >
+              Built with love using caffeine.ai
+            </a>
+          </p>
+        </div>
+      </footer>
+    </main>
+  );
+}

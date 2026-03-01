@@ -1,0 +1,217 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;500;600;700&family=Pacifico&family=Sacramento&family=Pinyon+Script&family=Alex+Brush&family=Allura&family=Tangerine:wght@400;700&family=Satisfy&family=Lobster&family=Italiana&family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,600;1,300&family=Nunito:ital,wght@0,300;0,400;0,600;1,400&family=Raleway:ital,wght@0,300;0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Petit+Formal+Script&family=La+Belle+Aurore&family=Clicker+Script&family=Rouge+Script&family=Kaushan+Script&family=Limelight&family=Bodoni+Moda:ital,wght@0,400;0,500;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Lumen Dei — Editorial B&W + Cream Luxury */
+    --radius: 0.25rem;
+
+    /* Core palette — OKLCH L C H */
+    --ivory: 0.975 0.008 85;
+    --cream: 0.955 0.012 85;
+    --parchment: 0.92 0.015 75;
+    --warm-gray: 0.82 0.008 60;
+    --mid-gray: 0.55 0.006 60;
+    --dark-gray: 0.28 0.005 60;
+    --charcoal: 0.18 0.004 60;
+    --ink: 0.08 0.003 60;
+
+    /* shadcn semantic tokens */
+    --background: 0.975 0.008 85;
+    --foreground: 0.08 0.003 60;
+    --card: 1 0 0;
+    --card-foreground: 0.08 0.003 60;
+    --popover: 1 0 0;
+    --popover-foreground: 0.08 0.003 60;
+    --primary: 0.08 0.003 60;
+    --primary-foreground: 0.975 0.008 85;
+    --secondary: 0.92 0.015 75;
+    --secondary-foreground: 0.18 0.004 60;
+    --muted: 0.93 0.01 75;
+    --muted-foreground: 0.5 0.006 60;
+    --accent: 0.92 0.015 75;
+    --accent-foreground: 0.08 0.003 60;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+    --border: 0.82 0.008 60;
+    --input: 0.88 0.01 70;
+    --ring: 0.4 0.006 60;
+
+    /* chart */
+    --chart-1: 0.646 0.222 41.116;
+    --chart-2: 0.6 0.118 184.704;
+    --chart-3: 0.398 0.07 227.392;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+
+    /* sidebar */
+    --sidebar: 0.95 0.01 80;
+    --sidebar-foreground: 0.08 0.003 60;
+    --sidebar-primary: 0.08 0.003 60;
+    --sidebar-primary-foreground: 0.975 0.008 85;
+    --sidebar-accent: 0.92 0.015 75;
+    --sidebar-accent-foreground: 0.08 0.003 60;
+    --sidebar-border: 0.82 0.008 60;
+    --sidebar-ring: 0.4 0.006 60;
+
+    /* Custom app tokens */
+    --font-display: "Playfair Display", Georgia, serif;
+    --font-elegant: "Cormorant Garamond", Georgia, serif;
+    --font-ui: "Jost", system-ui, sans-serif;
+
+    /* Pastel color tokens — OKLCH L C H */
+    --blush: 0.92 0.055 5;
+    --baby-pink: 0.88 0.07 350;
+    --lavender: 0.88 0.055 290;
+    --peach: 0.90 0.06 50;
+    --petal: 0.93 0.04 15;
+    --sage: 0.88 0.04 140;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-ui);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+}
+
+@layer components {
+  /* Editorial text treatment */
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-elegant {
+    font-family: var(--font-elegant);
+  }
+  .font-ui {
+    font-family: var(--font-ui);
+  }
+
+  /* Thin border treatment for old-money feel */
+  .border-hairline {
+    border-width: 0.5px;
+  }
+
+  /* Canvas wrapper */
+  .canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    box-shadow:
+      0 4px 24px oklch(0.08 0.003 60 / 0.12),
+      0 1px 4px oklch(0.08 0.003 60 / 0.08);
+  }
+
+  /* Filter strip scroll */
+  .filter-strip {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0.75rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .filter-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Template card hover */
+  .template-card {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+  .template-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px oklch(0.08 0.003 60 / 0.14);
+  }
+
+  /* Elegant rule separator */
+  .rule-ornamental::before,
+  .rule-ornamental::after {
+    content: "";
+    display: inline-block;
+    width: 3rem;
+    height: 0.5px;
+    background: oklch(0.55 0.006 60);
+    vertical-align: middle;
+    margin: 0 0.75rem;
+  }
+
+  /* Slider track styling */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1px;
+    background: oklch(0.82 0.008 60);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: oklch(0.08 0.003 60);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: oklch(0.08 0.003 60);
+    cursor: pointer;
+    border: none;
+  }
+}
+
+@layer utilities {
+  .text-ink {
+    color: oklch(0.08 0.003 60);
+  }
+  .text-charcoal {
+    color: oklch(0.18 0.004 60);
+  }
+  .text-mid {
+    color: oklch(0.55 0.006 60);
+  }
+  .bg-ivory {
+    background-color: oklch(0.975 0.008 85);
+  }
+  .bg-cream {
+    background-color: oklch(0.955 0.012 85);
+  }
+  .bg-parchment {
+    background-color: oklch(0.92 0.015 75);
+  }
+  .tracking-editorial {
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+  }
+}
