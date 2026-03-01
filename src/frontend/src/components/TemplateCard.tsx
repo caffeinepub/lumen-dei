@@ -33,7 +33,7 @@ const PASTEL_GRADIENTS: Record<string, string> = {
 };
 
 // Visual hints for prebuilt templates
-function PrebuiltThumbnail({ hint }: { hint: string }) {
+export function PrebuiltThumbnail({ hint }: { hint: string }) {
   // Handle pastel templates
   if (hint.startsWith("pastel-")) {
     const gradient = PASTEL_GRADIENTS[hint];
@@ -624,6 +624,7 @@ interface TemplateCardProps {
   type: "prebuilt" | "custom";
   index: number;
   onDelete?: (id: string) => void;
+  onPreview?: () => void;
 }
 
 export function TemplateCard({
@@ -631,6 +632,7 @@ export function TemplateCard({
   type,
   index,
   onDelete,
+  onPreview,
 }: TemplateCardProps) {
   const navigate = useNavigate();
   const isOldMoney = template.category === TemplateCategory.old_money;
@@ -638,6 +640,14 @@ export function TemplateCard({
   const handleEdit = () => {
     const state = { templateId: template.id, templateType: type };
     navigate({ to: "/editor", search: state as Record<string, string> });
+  };
+
+  const handleClick = () => {
+    if (type === "prebuilt" && onPreview) {
+      onPreview();
+    } else {
+      handleEdit();
+    }
   };
 
   return (
@@ -652,7 +662,7 @@ export function TemplateCard({
         delay: index * 0.05,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      onClick={handleEdit}
+      onClick={handleClick}
     >
       {/* Thumbnail */}
       <div className="aspect-square relative overflow-hidden">

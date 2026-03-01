@@ -15,6 +15,16 @@ const FRAMES: FrameDef[] = [
   { type: "corners", label: "Corners" },
   { type: "film", label: "Film Strip" },
   { type: "vignette", label: "Vignette" },
+  { type: "orange", label: "Orange" },
+  { type: "coral-frame", label: "Coral" },
+  { type: "mint-frame", label: "Mint" },
+  { type: "sky-blue", label: "Sky Blue" },
+  { type: "lilac-frame", label: "Lilac" },
+  { type: "soft-yellow", label: "Yellow" },
+  { type: "terracotta", label: "Terracotta" },
+  { type: "blush-frame", label: "Blush" },
+  { type: "emerald-frame", label: "Emerald" },
+  { type: "slate-frame", label: "Slate" },
 ];
 
 function FramePreview({ type }: { type: FrameType }) {
@@ -79,6 +89,106 @@ function FramePreview({ type }: { type: FrameType }) {
             "radial-gradient(circle, oklch(0.955 0.012 85) 40%, oklch(0.08 0.003 60) 100%)",
         }}
       />
+    );
+  }
+  if (type === "orange") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#FF8C42" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "coral-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#F4A261" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "mint-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#A8E6CF" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "sky-blue") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#87CEEB" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "lilac-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#C8A8E0" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "soft-yellow") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#FFE066" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "terracotta") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#C67C52" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "blush-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#F8BBD9" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "emerald-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#4CAF82" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
+    );
+  }
+  if (type === "slate-frame") {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center p-1"
+        style={{ background: "#7B8FA6" }}
+      >
+        <div className="w-full h-full border border-white/40 opacity-70" />
+      </div>
     );
   }
   return null;

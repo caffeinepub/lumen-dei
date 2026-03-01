@@ -20,7 +20,17 @@ export type FilterName =
   | "Mint Fresh"
   | "Mocha"
   | "Velvet Pink"
-  | "Airy";
+  | "Airy"
+  | "Cherry Blossom"
+  | "Cosmic"
+  | "Lush Green"
+  | "Desert Sand"
+  | "Arctic"
+  | "Neon Dream"
+  | "Soft Linen"
+  | "Marshmallow"
+  | "Espresso"
+  | "Azure Sky";
 
 export type FrameType =
   | "none"
@@ -28,7 +38,17 @@ export type FrameType =
   | "double"
   | "corners"
   | "film"
-  | "vignette";
+  | "vignette"
+  | "orange"
+  | "coral-frame"
+  | "mint-frame"
+  | "sky-blue"
+  | "lilac-frame"
+  | "soft-yellow"
+  | "terracotta"
+  | "blush-frame"
+  | "emerald-frame"
+  | "slate-frame";
 
 export type StickerType =
   | "star"

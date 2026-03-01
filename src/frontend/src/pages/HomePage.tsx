@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { TemplateCategory } from "../backend";
 import type { CustomTemplate, PrebuiltTemplate } from "../backend";
-import { TemplateCard } from "../components/TemplateCard";
+import { PrebuiltThumbnail, TemplateCard } from "../components/TemplateCard";
 import { FALLBACK_PREBUILT_TEMPLATES } from "../data/prebuiltTemplates";
 import {
   useCustomTemplates,
@@ -155,6 +155,120 @@ function RotatingQuote() {
   );
 }
 
+interface TemplatePreviewModalProps {
+  template: PrebuiltTemplate;
+  onClose: () => void;
+  onUse: () => void;
+}
+
+function TemplatePreviewModal({
+  template,
+  onClose,
+  onUse,
+}: TemplatePreviewModalProps) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        onClick={onClose}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "rgba(26,26,26,0.55)",
+            backdropFilter: "blur(6px)",
+          }}
+        />
+
+        {/* Modal card */}
+        <motion.div
+          className="relative z-10 bg-ivory border border-ink/20 shadow-2xl max-w-sm w-full"
+          initial={{ opacity: 0, scale: 0.94, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.94, y: 16 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3 right-3 p-1.5 text-mid-gray hover:text-ink transition-colors z-10"
+            aria-label="Close preview"
+          >
+            <X size={14} />
+          </button>
+
+          {/* Thumbnail — large square */}
+          <div className="w-full aspect-square overflow-hidden border-b border-ink/10">
+            <PrebuiltThumbnail hint={template.thumbnailHint} />
+          </div>
+
+          {/* Info */}
+          <div className="p-5 flex flex-col gap-4">
+            <div>
+              <p className="font-ui text-[9px] tracking-[0.2em] text-mid-gray/60 uppercase mb-1">
+                {template.category === TemplateCategory.old_money
+                  ? "Old Money"
+                  : template.thumbnailHint.startsWith("pastel-")
+                    ? "✿ Pastel"
+                    : "Instagram"}
+              </p>
+              <h2 className="font-display text-xl text-ink leading-snug">
+                {template.name}
+              </h2>
+              {template.description && (
+                <p className="font-elegant text-sm italic text-mid-gray/70 mt-1.5 leading-relaxed">
+                  {template.description}
+                </p>
+              )}
+            </div>
+
+            {/* Ornamental divider */}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-warm-gray/30" />
+              <svg
+                width="6"
+                height="6"
+                viewBox="0 0 6 6"
+                fill="currentColor"
+                className="text-ink/20"
+                aria-hidden="true"
+              >
+                <circle cx="3" cy="3" r="3" />
+              </svg>
+              <div className="h-px flex-1 bg-warm-gray/30" />
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 border border-ink/25 text-ink/60 font-ui text-[10px] tracking-[0.15em] uppercase py-3 hover:bg-ink/5 transition-colors"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={onUse}
+                className="flex-1 bg-ink text-ivory font-ui text-[10px] tracking-[0.15em] uppercase py-3 hover:bg-ink/85 transition-colors"
+              >
+                Use Template
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 type Tab = "all" | "instagram" | "old_money" | "pastel" | "mine";
 
 const TABS: { id: Tab; label: string }[] = [
@@ -167,6 +281,8 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function HomePage() {
   const [activeTab, setActiveTab] = useState<Tab>("all");
+  const [previewTemplate, setPreviewTemplate] =
+    useState<PrebuiltTemplate | null>(null);
   const navigate = useNavigate();
 
   const { data: prebuiltData, isLoading: prebuiltLoading } =
@@ -407,12 +523,31 @@ export function HomePage() {
                   template={t}
                   type="prebuilt"
                   index={filteredCustom.length + i}
+                  onPreview={() => setPreviewTemplate(t)}
                 />
               ))}
             </motion.div>
           </AnimatePresence>
         )}
       </section>
+
+      {/* Template Preview Modal */}
+      {previewTemplate && (
+        <TemplatePreviewModal
+          template={previewTemplate}
+          onClose={() => setPreviewTemplate(null)}
+          onUse={() => {
+            navigate({
+              to: "/editor",
+              search: {
+                templateId: previewTemplate.id,
+                templateType: "prebuilt",
+              } as Record<string, string>,
+            });
+            setPreviewTemplate(null);
+          }}
+        />
+      )}
 
       {/* Footer */}
       <footer className="max-w-7xl mx-auto px-6 py-10 border-t border-warm-gray/20">

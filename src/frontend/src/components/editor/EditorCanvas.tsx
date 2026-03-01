@@ -67,6 +67,66 @@ function FrameOverlay({ frame }: FrameOverlayProps) {
           }}
         />
       )}
+      {frame === "orange" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #FF8C42" }}
+        />
+      )}
+      {frame === "coral-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #F4A261" }}
+        />
+      )}
+      {frame === "mint-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #A8E6CF" }}
+        />
+      )}
+      {frame === "sky-blue" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #87CEEB" }}
+        />
+      )}
+      {frame === "lilac-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #C8A8E0" }}
+        />
+      )}
+      {frame === "soft-yellow" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #FFE066" }}
+        />
+      )}
+      {frame === "terracotta" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #C67C52" }}
+        />
+      )}
+      {frame === "blush-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #F8BBD9" }}
+        />
+      )}
+      {frame === "emerald-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #4CAF82" }}
+        />
+      )}
+      {frame === "slate-frame" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 0 14px #7B8FA6" }}
+        />
+      )}
     </div>
   );
 }

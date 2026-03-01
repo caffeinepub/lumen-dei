@@ -126,6 +126,63 @@ export const FILTERS: FilterDef[] = [
     cssFilter: "brightness(1.15) contrast(0.82) saturate(0.85) sepia(0.05)",
     description: "Light and airy",
   },
+  {
+    name: "Cherry Blossom",
+    cssFilter:
+      "sepia(0.15) saturate(1.9) hue-rotate(308deg) brightness(1.06) contrast(0.94)",
+    description: "Soft cherry blossom pink",
+  },
+  {
+    name: "Cosmic",
+    cssFilter:
+      "saturate(1.4) hue-rotate(200deg) brightness(0.88) contrast(1.25) sepia(0.1)",
+    description: "Deep cosmic indigo",
+  },
+  {
+    name: "Lush Green",
+    cssFilter:
+      "saturate(1.5) hue-rotate(100deg) brightness(1.04) contrast(1.05)",
+    description: "Vibrant lush greenery",
+  },
+  {
+    name: "Desert Sand",
+    cssFilter:
+      "sepia(0.55) saturate(0.75) brightness(1.08) contrast(0.92) hue-rotate(5deg)",
+    description: "Warm desert sand tones",
+  },
+  {
+    name: "Arctic",
+    cssFilter:
+      "saturate(0.6) hue-rotate(185deg) brightness(1.15) contrast(0.88)",
+    description: "Cool icy arctic blue",
+  },
+  {
+    name: "Neon Dream",
+    cssFilter:
+      "saturate(2.2) hue-rotate(270deg) brightness(1.05) contrast(1.2)",
+    description: "Vivid neon purple glow",
+  },
+  {
+    name: "Soft Linen",
+    cssFilter: "sepia(0.35) saturate(0.65) brightness(1.1) contrast(0.88)",
+    description: "Neutral linen warmth",
+  },
+  {
+    name: "Marshmallow",
+    cssFilter: "brightness(1.2) contrast(0.78) saturate(0.7) sepia(0.08)",
+    description: "Airy white marshmallow",
+  },
+  {
+    name: "Espresso",
+    cssFilter: "sepia(0.7) saturate(0.6) brightness(0.88) contrast(1.2)",
+    description: "Deep espresso brown",
+  },
+  {
+    name: "Azure Sky",
+    cssFilter:
+      "saturate(1.3) hue-rotate(170deg) brightness(1.1) contrast(0.95) sepia(0.05)",
+    description: "Clear azure sky blue",
+  },
 ];
 
 export function getFilterCss(

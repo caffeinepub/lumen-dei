@@ -64,6 +64,26 @@ const STRIP_FRAMES: StripFrame[] = [
   { id: "peach", label: "Peach", type: "color", color: "#ffc5a1" },
   { id: "brown", label: "Chocolate", type: "color", color: "#5c3d2e" },
   { id: "black", label: "Black", type: "color", color: "#1a1a1a" },
+  { id: "orange-strip", label: "Orange 🍊", type: "color", color: "#FF8C42" },
+  { id: "coral-strip", label: "Coral", type: "color", color: "#F4A261" },
+  { id: "mint-strip", label: "Mint 🌿", type: "color", color: "#A8E6CF" },
+  { id: "sky-blue-strip", label: "Sky Blue", type: "color", color: "#87CEEB" },
+  { id: "lilac-strip", label: "Lilac 💜", type: "color", color: "#C8A8E0" },
+  {
+    id: "soft-yellow-strip",
+    label: "Lemon 🌼",
+    type: "color",
+    color: "#FFE066",
+  },
+  {
+    id: "terracotta-strip",
+    label: "Terracotta",
+    type: "color",
+    color: "#C67C52",
+  },
+  { id: "blush-strip", label: "Blush 🌸", type: "color", color: "#F8BBD9" },
+  { id: "emerald-strip", label: "Emerald 💚", type: "color", color: "#4CAF82" },
+  { id: "slate-strip", label: "Slate", type: "color", color: "#7B8FA6" },
   { id: "bows", label: "Bows 🎀", type: "themed", pattern: "bows" },
   { id: "ribbons", label: "Ribbons", type: "themed", pattern: "ribbons" },
   { id: "flowers", label: "Flowers 🌸", type: "themed", pattern: "flowers" },
@@ -457,7 +477,7 @@ export function PhotoboothPage() {
   const [showDateTime, setShowDateTime] = useState(true);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
-  const [stripCount, setStripCount] = useState<3 | 4>(4);
+  const stripCount = 3;
 
   // Start webcam
   const startCamera = useCallback(async () => {
@@ -541,7 +561,7 @@ export function PhotoboothPage() {
         return next;
       });
     }
-  }, [phase, countdown, capturePhoto, stripCount]);
+  }, [phase, countdown, capturePhoto]);
 
   // Reset
   const handleReset = () => {
@@ -718,14 +738,7 @@ export function PhotoboothPage() {
     ctx.fillText("~Lamen Dei Photobooth~", STRIP_W / 2, yPos + 22);
 
     return c;
-  }, [
-    photos,
-    selectedFrame,
-    selectedShape,
-    selectedStickers,
-    showDateTime,
-    stripCount,
-  ]);
+  }, [photos, selectedFrame, selectedShape, selectedStickers, showDateTime]);
 
   // Download
   const handleDownload = async () => {
@@ -1318,49 +1331,6 @@ export function PhotoboothPage() {
                     Clear all
                   </button>
                 )}
-              </div>
-            </div>
-
-            {/* Photos in Strip */}
-            <div className="rounded-2xl bg-white/60 backdrop-blur-md shadow-lg p-4">
-              <h3
-                className="text-sm mb-3"
-                style={{
-                  fontFamily: "'Sacramento', cursive",
-                  color: "oklch(0.45 0.15 350)",
-                  fontSize: "20px",
-                }}
-              >
-                Photos in Strip ✦
-              </h3>
-              <div className="flex gap-3">
-                {([3, 4] as const).map((count) => (
-                  <button
-                    key={`strip-count-${count}`}
-                    type="button"
-                    onClick={() => setStripCount(count)}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95"
-                    style={{
-                      fontFamily: "'Quicksand', sans-serif",
-                      background:
-                        stripCount === count
-                          ? "linear-gradient(135deg, oklch(0.72 0.18 350) 0%, oklch(0.62 0.2 350) 100%)"
-                          : "rgba(255,255,255,0.5)",
-                      color:
-                        stripCount === count ? "#fff" : "oklch(0.5 0.1 350)",
-                      border:
-                        stripCount === count
-                          ? "1.5px solid oklch(0.65 0.18 350)"
-                          : "1.5px solid oklch(0.82 0.055 5)",
-                      boxShadow:
-                        stripCount === count
-                          ? "0 2px 8px rgba(255,150,180,0.3)"
-                          : "none",
-                    }}
-                  >
-                    {count} Photos
-                  </button>
-                ))}
               </div>
             </div>
 

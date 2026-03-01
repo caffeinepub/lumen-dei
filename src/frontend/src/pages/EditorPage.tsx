@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { FALLBACK_PREBUILT_TEMPLATES } from "../data/prebuiltTemplates";
+import { PREBUILT_TEMPLATE_CANVAS_STATES } from "../data/templateCanvasStates";
 import {
   useCustomTemplates,
   usePrebuiltTemplates,
@@ -212,12 +213,20 @@ export function EditorPage() {
     } else {
       const t = prebuilts.find((p) => p.id === search.templateId);
       if (t) {
-        const isOldMoney = t.thumbnailHint.startsWith("old-money");
-        setCanvasState({
-          ...DEFAULT_CANVAS_STATE,
-          filter: isOldMoney ? "Sepia" : "Faded",
-          frame: isOldMoney ? "double" : "corners",
-        });
+        // Use the exact canvas state mapped to this template ID so the editor
+        // opens with the same visual appearance shown in the template thumbnail.
+        const exactState = PREBUILT_TEMPLATE_CANVAS_STATES[t.id];
+        if (exactState) {
+          setCanvasState({ ...exactState });
+        } else {
+          // Fallback for any template not yet in the mapping
+          const isOldMoney = t.thumbnailHint.startsWith("old-money");
+          setCanvasState({
+            ...DEFAULT_CANVAS_STATE,
+            filter: isOldMoney ? "Sepia" : "Faded",
+            frame: isOldMoney ? "double" : "corners",
+          });
+        }
       }
     }
   }, [search.templateId, search.templateType, prebuiltData, customData]);

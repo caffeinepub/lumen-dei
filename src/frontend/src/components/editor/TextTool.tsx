@@ -139,13 +139,21 @@ export function TextTool({
                     <input
                       id="text-content-input"
                       type="text"
+                      maxLength={20}
                       value={selectedText.text}
                       onChange={(e) =>
-                        onUpdateText(selectedText.id, { text: e.target.value })
+                        onUpdateText(selectedText.id, {
+                          text: e.target.value.slice(0, 20),
+                        })
                       }
                       className="w-full bg-white border border-warm-gray/40 px-2 py-1.5 font-ui text-xs text-ink focus:outline-none focus:border-ink/40"
-                      placeholder="Enter text..."
+                      placeholder="Enter text... (max 20)"
                     />
+                    <p
+                      className={`font-ui text-[8px] mt-1 text-right ${selectedText.text.length >= 20 ? "text-rose-400" : "text-mid-gray/50"}`}
+                    >
+                      {selectedText.text.length}/20
+                    </p>
                   </div>
 
                   {/* Font picker */}
