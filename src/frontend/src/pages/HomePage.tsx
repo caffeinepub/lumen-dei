@@ -285,15 +285,14 @@ export function HomePage() {
     useState<PrebuiltTemplate | null>(null);
   const navigate = useNavigate();
 
-  const { data: prebuiltData, isLoading: prebuiltLoading } =
-    usePrebuiltTemplates();
+  // Prebuilt templates are always served from the local list (all 28 templates).
+  // The backend only contains 2 stub templates and must NOT override the local list.
+  usePrebuiltTemplates(); // keep the hook call to avoid breaking the actor init flow
   const { data: customData, isLoading: customLoading } = useCustomTemplates();
   const deleteMutation = useDeleteTemplate();
 
-  const prebuilt: PrebuiltTemplate[] =
-    prebuiltData && prebuiltData.length > 0
-      ? prebuiltData
-      : FALLBACK_PREBUILT_TEMPLATES;
+  // Always use the full local template list — never replaced by backend data
+  const prebuilt: PrebuiltTemplate[] = FALLBACK_PREBUILT_TEMPLATES;
 
   const custom: CustomTemplate[] = customData || [];
 
@@ -335,7 +334,8 @@ export function HomePage() {
       !t.thumbnailHint.startsWith("pastel-"),
   ).length;
 
-  const isLoading = prebuiltLoading || customLoading;
+  // Only wait for custom templates to load; prebuilt are instantly available
+  const isLoading = customLoading;
 
   const handleDelete = (id: string) => {
     if (confirm("Delete this template?")) {
