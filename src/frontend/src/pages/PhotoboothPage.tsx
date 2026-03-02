@@ -84,6 +84,12 @@ const STRIP_FRAMES: StripFrame[] = [
   { id: "blush-strip", label: "Blush 🌸", type: "color", color: "#F8BBD9" },
   { id: "emerald-strip", label: "Emerald 💚", type: "color", color: "#4CAF82" },
   { id: "slate-strip", label: "Slate", type: "color", color: "#7B8FA6" },
+  {
+    id: "hearts-corner",
+    label: "Hearts Corner 🧡",
+    type: "themed",
+    pattern: "hearts-corner",
+  },
   { id: "bows", label: "Bows 🎀", type: "themed", pattern: "bows" },
   { id: "ribbons", label: "Ribbons", type: "themed", pattern: "ribbons" },
   { id: "flowers", label: "Flowers 🌸", type: "themed", pattern: "flowers" },
@@ -145,19 +151,6 @@ const PHOTO_SHAPES: PhotoShape[] = [
     clipPath: "circle(50%)",
     borderRadius: "50%",
   },
-  {
-    id: "heart",
-    label: "Heart",
-    clipPath:
-      "path('M 50 85 C 20 65 0 45 0 30 A 25 25 0 0 1 50 20 A 25 25 0 0 1 100 30 C 100 45 80 65 50 85 Z')",
-    borderRadius: "0",
-  },
-  {
-    id: "diamond",
-    label: "Diamond",
-    clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-    borderRadius: "0",
-  },
 ];
 
 const STRIP_STICKERS: StripStickerDef[] = [
@@ -193,6 +186,10 @@ function getFrameStyle(frame: StripFrame): React.CSSProperties {
   }
 
   const patterns: Record<string, React.CSSProperties> = {
+    "hearts-corner": {
+      background: "#fff8f8",
+      border: "12px solid #ffe0e8",
+    },
     bows: {
       background: "#ffd1dc",
       border: "12px solid #ffd1dc",
@@ -350,12 +347,13 @@ function PhotostripPreview({
       className="inline-flex flex-col items-center relative select-none"
       style={{
         ...frameStyle,
-        padding: "16px",
-        paddingBottom: "24px",
-        minWidth: "220px",
-        maxWidth: "260px",
+        padding: "12px",
+        paddingBottom: "20px",
+        width: "220px",
+        minHeight: "490px",
         borderRadius: "4px",
         position: "relative",
+        boxSizing: "border-box",
       }}
     >
       {/* Film strip side holes decoration */}
@@ -398,30 +396,63 @@ function PhotostripPreview({
       <div className="flex flex-col gap-2 w-full">
         {Array.from({ length: stripCount }, (_, idx) => {
           const slotKey = `slot-${stripCount}-${idx}`;
+          const isHeartsCorner = frame.id === "hearts-corner";
           return (
-            <div
-              key={slotKey}
-              className="relative overflow-hidden"
-              style={{
-                width: "100%",
-                aspectRatio: "4/3",
-                borderRadius: shape.borderRadius,
-                clipPath:
-                  shape.clipPath !== "none" ? shape.clipPath : undefined,
-                background: photos[idx] ? undefined : "oklch(0.88 0.055 5)",
-              }}
-            >
-              {photos[idx] ? (
-                <img
-                  src={photos[idx]}
-                  alt={`Captured moment ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                  style={{ display: "block" }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-2xl opacity-40">
-                  📷
-                </div>
+            <div key={slotKey} className="relative" style={{ width: "100%" }}>
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  width: "100%",
+                  aspectRatio: "278/190",
+                  borderRadius: shape.borderRadius,
+                  clipPath:
+                    shape.clipPath !== "none" ? shape.clipPath : undefined,
+                  background: photos[idx] ? undefined : "oklch(0.88 0.055 5)",
+                }}
+              >
+                {photos[idx] ? (
+                  <img
+                    src={photos[idx]}
+                    alt={`Captured moment ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    style={{ display: "block" }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-2xl opacity-40">
+                    📷
+                  </div>
+                )}
+              </div>
+              {/* Hearts Corner overlay — orange top-left, pink bottom-right */}
+              {isHeartsCorner && (
+                <>
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: 2,
+                      left: 2,
+                      fontSize: "18px",
+                      lineHeight: 1,
+                      pointerEvents: "none",
+                      filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))",
+                    }}
+                  >
+                    🧡
+                  </span>
+                  <span
+                    style={{
+                      position: "absolute",
+                      bottom: 2,
+                      right: 2,
+                      fontSize: "18px",
+                      lineHeight: 1,
+                      pointerEvents: "none",
+                      filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))",
+                    }}
+                  >
+                    🩷
+                  </span>
+                </>
               )}
             </div>
           );
@@ -573,23 +604,25 @@ export function PhotoboothPage() {
 
   // Build canvas for export
   const buildStripCanvas = useCallback(async (): Promise<HTMLCanvasElement> => {
-    // 2x pixel density for high-quality export
+    // Strip at 302×671 canvas (2x density for crisp export)
     const SCALE = 2;
-    const STRIP_W = 340;
-    const PHOTO_H = 240;
-    const PHOTO_W = STRIP_W - 64;
-    const GAP = 10;
-    const PADDING = 20;
-    const META_H = showDateTime ? 32 : 0;
-    const LOGO_H = 28;
-    const STICKER_H = selectedStickers.length > 0 ? 32 : 0;
-    const TOTAL_H =
-      PADDING * 2 +
-      STICKER_H +
-      (PHOTO_H + GAP) * stripCount -
-      GAP +
-      META_H +
-      LOGO_H;
+    const STRIP_W = 302;
+    const STRIP_H = 671;
+    const PADDING = 12;
+    const META_H = showDateTime ? 28 : 0;
+    const LOGO_H = 26;
+    const STICKER_H = selectedStickers.length > 0 ? 28 : 0;
+    const GAP = 8;
+    const availablePhotoH =
+      STRIP_H -
+      PADDING * 2 -
+      STICKER_H -
+      META_H -
+      LOGO_H -
+      GAP * (stripCount - 1);
+    const PHOTO_H = Math.floor(availablePhotoH / stripCount);
+    const PHOTO_W = STRIP_W - PADDING * 2;
+    const TOTAL_H = STRIP_H;
 
     const c = document.createElement("canvas");
     c.width = STRIP_W * SCALE;
@@ -640,43 +673,9 @@ export function PhotoboothPage() {
                 Math.PI * 2,
               );
               ctx.clip();
-            } else if (selectedShape.id === "diamond") {
-              ctx.beginPath();
-              ctx.moveTo(x + PHOTO_W / 2, yPos);
-              ctx.lineTo(x + PHOTO_W, yPos + PHOTO_H / 2);
-              ctx.lineTo(x + PHOTO_W / 2, yPos + PHOTO_H);
-              ctx.lineTo(x, yPos + PHOTO_H / 2);
-              ctx.closePath();
-              ctx.clip();
             } else if (selectedShape.id === "rounded") {
               ctx.beginPath();
               ctx.roundRect(x, yPos, PHOTO_W, PHOTO_H, 12);
-              ctx.clip();
-            } else if (selectedShape.id === "heart") {
-              // Heart clip on canvas
-              const hw = PHOTO_W / 2;
-              const hh = PHOTO_H / 2;
-              const cx = x + hw;
-              const cy = yPos + hh;
-              ctx.beginPath();
-              ctx.moveTo(cx, cy + hh * 0.85);
-              ctx.bezierCurveTo(
-                cx - hw,
-                cy + hh * 0.35,
-                cx - hw,
-                cy - hh * 0.15,
-                cx,
-                cy - hh * 0.15,
-              );
-              ctx.bezierCurveTo(
-                cx + hw,
-                cy - hh * 0.15,
-                cx + hw,
-                cy + hh * 0.35,
-                cx,
-                cy + hh * 0.85,
-              );
-              ctx.closePath();
               ctx.clip();
             }
             // Draw image maintaining aspect ratio (cover)
@@ -695,6 +694,14 @@ export function PhotoboothPage() {
             }
             ctx.drawImage(img, sx, sy, sw, sh, x, yPos, PHOTO_W, PHOTO_H);
             ctx.restore();
+            // Draw hearts corner overlays on each photo
+            if (selectedFrame.id === "hearts-corner") {
+              ctx.font = "18px serif";
+              ctx.textAlign = "left";
+              ctx.fillText("🧡", x + 2, yPos + 18);
+              ctx.textAlign = "right";
+              ctx.fillText("🩷", x + PHOTO_W - 2, yPos + PHOTO_H - 2);
+            }
             resolve();
           };
           img.src = photoDataUrl;

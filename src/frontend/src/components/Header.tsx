@@ -14,13 +14,35 @@ export function Header() {
           <motion.div
             whileHover={{ scale: 1.06 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
+            className="flex items-center gap-2"
           >
-            <img
-              src="/assets/uploads/image-2-1.png"
-              alt="Lumen Dei"
-              className="w-10 h-10 object-contain"
-              style={{ background: "#ffffff" }}
-            />
+            {/* Lumen Dei text logo — white bg, black circle border, black thin text */}
+            <div
+              className="flex items-center justify-center rounded-full bg-white"
+              style={{
+                width: 44,
+                height: 44,
+                flexShrink: 0,
+                border: "2px solid #000",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontSize: "7.5px",
+                  fontWeight: 300,
+                  letterSpacing: "0.06em",
+                  color: "#000",
+                  lineHeight: 1.2,
+                  textAlign: "center",
+                  userSelect: "none",
+                  display: "block",
+                  whiteSpace: "pre-line",
+                }}
+              >
+                {"Lumen\nDei"}
+              </span>
+            </div>
           </motion.div>
         </Link>
 

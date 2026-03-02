@@ -586,12 +586,9 @@ export function HomePage() {
       <footer className="max-w-7xl mx-auto px-6 py-10 border-t border-warm-gray/20">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center">
-            <img
-              src="/assets/uploads/image-2-1.png"
-              alt="Lumen Dei"
-              className="w-9 h-9 object-contain"
-              style={{ background: "#ffffff" }}
-            />
+            <span className="font-display text-sm tracking-widest text-ink/60 uppercase">
+              Lumen Dei
+            </span>
           </div>
           <p className="font-ui text-[9px] tracking-[0.16em] text-mid-gray/40 uppercase">
             © {new Date().getFullYear()}.{" "}
