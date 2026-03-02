@@ -585,15 +585,13 @@ export function HomePage() {
       {/* Footer */}
       <footer className="max-w-7xl mx-auto px-6 py-10 border-t border-warm-gray/20">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <img
               src="/assets/uploads/image-2-1.png"
               alt="Lumen Dei"
-              className="w-7 h-7 object-contain opacity-70"
+              className="w-9 h-9 object-contain"
+              style={{ background: "#ffffff" }}
             />
-            <span className="font-display text-[11px] text-mid-gray/60 tracking-widest italic">
-              Lumen Dei
-            </span>
           </div>
           <p className="font-ui text-[9px] tracking-[0.16em] text-mid-gray/40 uppercase">
             © {new Date().getFullYear()}.{" "}
