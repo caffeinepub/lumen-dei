@@ -23,7 +23,7 @@ export function Header() {
                 width: 44,
                 height: 44,
                 flexShrink: 0,
-                border: "2px solid #000",
+                border: "1px solid #000",
               }}
             >
               <span
