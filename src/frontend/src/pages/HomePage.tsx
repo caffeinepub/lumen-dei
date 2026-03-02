@@ -587,7 +587,7 @@ export function HomePage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
-              src="/assets/generated/lumen-dei-logo-transparent.dim_400x400.png"
+              src="/assets/uploads/image-2-1.png"
               alt="Lumen Dei"
               className="w-7 h-7 object-contain opacity-70"
             />

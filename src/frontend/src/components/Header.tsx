@@ -11,19 +11,26 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <motion.img
-            src="/assets/generated/lumen-dei-logo-transparent.dim_400x400.png"
-            alt="Lumen Dei"
-            className="w-8 h-8 object-contain opacity-90"
-            whileHover={{ scale: 1.06, opacity: 1 }}
+          <motion.div
+            className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0"
+            style={{
+              background: "#ffffff",
+              border: "1.5px solid rgba(0,0,0,0.12)",
+              boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+            }}
+            whileHover={{ scale: 1.06 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
-          />
+          >
+            <img
+              src="/assets/uploads/image-2-1.png"
+              alt="Lumen Dei"
+              className="w-9 h-9 object-contain"
+              style={{ background: "#ffffff" }}
+            />
+          </motion.div>
           <div className="hidden sm:flex flex-col justify-center">
-            <p className="font-display text-ink text-[13px] font-semibold tracking-[0.18em] uppercase leading-none">
-              Lumen Dei
-            </p>
-            <p className="font-ui text-mid-gray/60 text-[8px] tracking-[0.22em] uppercase leading-none mt-[3px]">
-              Creative Studio
+            <p className="font-display text-ink text-[14px] font-semibold tracking-[0.18em] uppercase leading-none">
+              Lumen Dei Studio
             </p>
           </div>
         </Link>
