@@ -298,18 +298,13 @@ export function HomePage() {
   const custom: CustomTemplate[] = customData || [];
 
   const filteredPrebuilt = prebuilt.filter((t) => {
+    const isPastel = t.thumbnailHint.startsWith("pastel-");
     if (activeTab === "all") return true;
     if (activeTab === "instagram")
-      return (
-        t.category === TemplateCategory.instagram &&
-        !t.thumbnailHint.startsWith("pastel-")
-      );
+      return t.category === TemplateCategory.instagram && !isPastel;
     if (activeTab === "old_money")
-      return (
-        t.category === TemplateCategory.old_money &&
-        !t.thumbnailHint.startsWith("pastel-")
-      );
-    if (activeTab === "pastel") return t.thumbnailHint.startsWith("pastel-");
+      return t.category === TemplateCategory.old_money && !isPastel;
+    if (activeTab === "pastel") return isPastel;
     if (activeTab === "mine") return false;
     return true;
   });
@@ -320,9 +315,25 @@ export function HomePage() {
       return t.category === TemplateCategory.instagram;
     if (activeTab === "old_money")
       return t.category === TemplateCategory.old_money;
+    if (activeTab === "pastel") return false;
     if (activeTab === "mine") return true;
     return true;
   });
+
+  // Counts for tab badges
+  const pastelCount = prebuilt.filter((t) =>
+    t.thumbnailHint.startsWith("pastel-"),
+  ).length;
+  const instagramCount = prebuilt.filter(
+    (t) =>
+      t.category === TemplateCategory.instagram &&
+      !t.thumbnailHint.startsWith("pastel-"),
+  ).length;
+  const oldMoneyCount = prebuilt.filter(
+    (t) =>
+      t.category === TemplateCategory.old_money &&
+      !t.thumbnailHint.startsWith("pastel-"),
+  ).length;
 
   const isLoading = prebuiltLoading || customLoading;
 
@@ -431,33 +442,55 @@ export function HomePage() {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="flex items-center justify-between mb-0"
         >
-          <div className="flex gap-0 border-b border-warm-gray/40 w-full">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-5 py-3.5 font-ui text-[10px] tracking-[0.16em] uppercase transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? "text-ink"
-                    : "text-mid-gray/60 hover:text-ink/70"
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <motion.div
-                    layoutId="tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-ink"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                {tab.id === "mine" && custom.length > 0 && (
-                  <span className="ml-1.5 font-ui text-[8px] bg-ink text-ivory rounded-full w-4 h-4 inline-flex items-center justify-center">
-                    {custom.length}
-                  </span>
-                )}
-              </button>
-            ))}
+          <div className="flex gap-0 border-b border-warm-gray/40 w-full overflow-x-auto">
+            {TABS.map((tab) => {
+              const count =
+                tab.id === "instagram"
+                  ? instagramCount
+                  : tab.id === "old_money"
+                    ? oldMoneyCount
+                    : tab.id === "pastel"
+                      ? pastelCount
+                      : tab.id === "mine"
+                        ? custom.length
+                        : prebuilt.length + custom.length;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative flex-shrink-0 px-5 py-3.5 font-ui text-[10px] tracking-[0.16em] uppercase transition-colors duration-200 ${
+                    activeTab === tab.id
+                      ? "text-ink"
+                      : "text-mid-gray/60 hover:text-ink/70"
+                  }`}
+                >
+                  {tab.label}
+                  {count > 0 && (
+                    <span
+                      className={`ml-1.5 font-ui text-[8px] rounded-full w-4 h-4 inline-flex items-center justify-center ${
+                        activeTab === tab.id
+                          ? "bg-ink text-ivory"
+                          : "bg-warm-gray/50 text-mid-gray"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  )}
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="tab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-ink"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </motion.div>
       </section>
