@@ -300,6 +300,49 @@ function getFrameStyle(frame: StripFrame): React.CSSProperties {
   );
 }
 
+// ── Logo color coordinated with strip frame ───────────────────────────────────
+function getLogoColor(frame: StripFrame): string {
+  if (frame.type === "color" && frame.color) {
+    // For very dark frames use a light tint of the frame color
+    const darkFrames = ["#1a1a1a", "#5c3d2e"];
+    if (darkFrames.includes(frame.color)) {
+      // lighten the frame color for contrast
+      return frame.id === "black" ? "#e8c8d8" : "#e8d5c8";
+    }
+    // For light/pastel color frames, darken the same hue
+    // Parse hex → darken by mixing with 50% shade
+    const hex = frame.color.replace("#", "");
+    const r = Number.parseInt(hex.substring(0, 2), 16);
+    const g = Number.parseInt(hex.substring(2, 4), 16);
+    const b = Number.parseInt(hex.substring(4, 6), 16);
+    // Darken to ~55% of original brightness for legibility
+    const dr = Math.round(r * 0.55);
+    const dg = Math.round(g * 0.55);
+    const db = Math.round(b * 0.55);
+    return `rgb(${dr},${dg},${db})`;
+  }
+  // Themed frames — use their dominant accent color
+  const themedColors: Record<string, string> = {
+    "hearts-corner": "#c0527a",
+    bows: "#b04070",
+    ribbons: "#904060",
+    flowers: "#7a9e50",
+    "leopard-brown": "#7a4a20",
+    "leopard-black": "#d4c0a0",
+    lace: "#8a6050",
+    "cherry-blossom": "#c07090",
+    daisies: "#b09020",
+    hearts: "#c05080",
+    "gold-foil": "#b08820",
+    "film-strip": "#e0d0c0",
+    polaroid: "#888080",
+    cottage: "#5a7a40",
+    butterfly: "#9060b0",
+    stardust: "#c0a8e8",
+  };
+  return themedColors[frame.id] ?? "#c06080";
+}
+
 // ── Photostrip Preview ────────────────────────────────────────────────────────
 
 interface PhotostripPreviewProps {
@@ -307,7 +350,8 @@ interface PhotostripPreviewProps {
   frame: StripFrame;
   shape: PhotoShape;
   stickers: string[];
-  showDateTime: boolean;
+  showDate: boolean;
+  showTime: boolean;
   stripRef: React.RefObject<HTMLDivElement | null>;
   stripCount: number;
 }
@@ -317,7 +361,8 @@ function PhotostripPreview({
   frame,
   shape,
   stickers,
-  showDateTime,
+  showDate,
+  showTime,
   stripRef,
   stripCount,
 }: PhotostripPreviewProps) {
@@ -459,8 +504,8 @@ function PhotostripPreview({
         })}
       </div>
 
-      {/* Date & Time — always before logo */}
-      {showDateTime && (
+      {/* Date and/or Time — always before logo */}
+      {(showDate || showTime) && (
         <p
           className="mt-2 text-center text-[10px] tracking-wide opacity-70"
           style={{
@@ -468,7 +513,11 @@ function PhotostripPreview({
             color: isDarkFrame ? "#fff" : "#555",
           }}
         >
-          {dateStr} · {timeStr}
+          {showDate && showTime
+            ? `${dateStr} · ${timeStr}`
+            : showDate
+              ? dateStr
+              : timeStr}
         </p>
       )}
 
@@ -477,11 +526,11 @@ function PhotostripPreview({
         className="mt-2 text-center text-[11px]"
         style={{
           fontFamily: "'Great Vibes', cursive",
-          color: isDarkFrame ? "#f8e8ee" : "#c06080",
+          color: getLogoColor(frame),
           fontSize: "13px",
         }}
       >
-        ~Lamen Dei Photobooth~
+        ~Lumen Dei Photobooth~
       </p>
     </div>
   );
@@ -505,7 +554,8 @@ export function PhotoboothPage() {
   const [selectedFrame, setSelectedFrame] = useState(STRIP_FRAMES[3]); // baby-pink default
   const [selectedShape, setSelectedShape] = useState(PHOTO_SHAPES[1]); // rounded default
   const [selectedStickers, setSelectedStickers] = useState<string[]>([]);
-  const [showDateTime, setShowDateTime] = useState(true);
+  const [showDate, setShowDate] = useState(true);
+  const [showTime, setShowTime] = useState(true);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const stripCount = 3;
@@ -609,7 +659,7 @@ export function PhotoboothPage() {
     const STRIP_W = 302;
     const STRIP_H = 671;
     const PADDING = 12;
-    const META_H = showDateTime ? 28 : 0;
+    const META_H = showDate || showTime ? 28 : 0;
     const LOGO_H = 26;
     const STICKER_H = selectedStickers.length > 0 ? 28 : 0;
     const GAP = 8;
@@ -714,8 +764,8 @@ export function PhotoboothPage() {
       yPos += PHOTO_H + GAP;
     }
 
-    // Date/time — always before logo
-    if (showDateTime) {
+    // Date and/or Time — always before logo
+    if (showDate || showTime) {
       const isDarkFrameLocal =
         selectedFrame.id === "black" ||
         selectedFrame.id === "brown" ||
@@ -725,27 +775,36 @@ export function PhotoboothPage() {
       ctx.font = "11px 'Quicksand', sans-serif";
       ctx.textAlign = "center";
       const now = new Date();
-      ctx.fillText(
-        `${now.toLocaleDateString()} · ${now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`,
-        STRIP_W / 2,
-        yPos + 18,
-      );
+      const dateStr = now.toLocaleDateString();
+      const timeStr = now.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const metaText =
+        showDate && showTime
+          ? `${dateStr} · ${timeStr}`
+          : showDate
+            ? dateStr
+            : timeStr;
+      ctx.fillText(metaText, STRIP_W / 2, yPos + 18);
       yPos += META_H;
     }
 
-    // Logo — always at the very bottom, fixed position
-    const isDarkFrame =
-      selectedFrame.id === "black" ||
-      selectedFrame.id === "brown" ||
-      selectedFrame.id === "leopard-black" ||
-      selectedFrame.id === "stardust";
-    ctx.fillStyle = isDarkFrame ? "#f8e8ee" : "#c06080";
+    // Logo — always at the very bottom, fixed position, color coordinated with frame
+    ctx.fillStyle = getLogoColor(selectedFrame);
     ctx.font = "16px 'Great Vibes', cursive";
     ctx.textAlign = "center";
-    ctx.fillText("~Lamen Dei Photobooth~", STRIP_W / 2, yPos + 22);
+    ctx.fillText("~Lumen Dei Photobooth~", STRIP_W / 2, yPos + 22);
 
     return c;
-  }, [photos, selectedFrame, selectedShape, selectedStickers, showDateTime]);
+  }, [
+    photos,
+    selectedFrame,
+    selectedShape,
+    selectedStickers,
+    showDate,
+    showTime,
+  ]);
 
   // Download
   const handleDownload = async () => {
@@ -936,7 +995,8 @@ export function PhotoboothPage() {
                     frame={selectedFrame}
                     shape={selectedShape}
                     stickers={selectedStickers}
-                    showDateTime={showDateTime}
+                    showDate={showDate}
+                    showTime={showTime}
                     stripRef={stripRef}
                     stripCount={stripCount}
                   />
@@ -1341,27 +1401,31 @@ export function PhotoboothPage() {
               </div>
             </div>
 
-            {/* Date/Time toggle */}
-            <div className="rounded-2xl bg-white/60 backdrop-blur-md shadow-lg px-4 py-3">
-              <label className="flex items-center gap-3 cursor-pointer">
+            {/* Date / Time toggles */}
+            <div className="rounded-2xl bg-white/60 backdrop-blur-md shadow-lg px-4 py-3 flex flex-col gap-3">
+              {/* Show Date */}
+              <label
+                className="flex items-center gap-3 cursor-pointer"
+                data-ocid="booth.show_date.toggle"
+              >
                 <div className="relative">
                   <input
                     type="checkbox"
                     className="sr-only"
-                    checked={showDateTime}
-                    onChange={(e) => setShowDateTime(e.target.checked)}
+                    checked={showDate}
+                    onChange={(e) => setShowDate(e.target.checked)}
                   />
                   <div
                     className="w-10 h-5 rounded-full transition-all duration-300"
                     style={{
-                      background: showDateTime
+                      background: showDate
                         ? "oklch(0.65 0.18 350)"
                         : "oklch(0.82 0.008 60)",
                     }}
                   />
                   <div
                     className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-300"
-                    style={{ left: showDateTime ? "22px" : "2px" }}
+                    style={{ left: showDate ? "22px" : "2px" }}
                   />
                 </div>
                 <span
@@ -1371,7 +1435,43 @@ export function PhotoboothPage() {
                     color: "oklch(0.45 0.1 350)",
                   }}
                 >
-                  Show Date & Time on strip
+                  Show Date on strip
+                </span>
+              </label>
+
+              {/* Show Time */}
+              <label
+                className="flex items-center gap-3 cursor-pointer"
+                data-ocid="booth.show_time.toggle"
+              >
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={showTime}
+                    onChange={(e) => setShowTime(e.target.checked)}
+                  />
+                  <div
+                    className="w-10 h-5 rounded-full transition-all duration-300"
+                    style={{
+                      background: showTime
+                        ? "oklch(0.65 0.18 350)"
+                        : "oklch(0.82 0.008 60)",
+                    }}
+                  />
+                  <div
+                    className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-300"
+                    style={{ left: showTime ? "22px" : "2px" }}
+                  />
+                </div>
+                <span
+                  className="text-sm"
+                  style={{
+                    fontFamily: "'Quicksand', sans-serif",
+                    color: "oklch(0.45 0.1 350)",
+                  }}
+                >
+                  Show Time on strip
                 </span>
               </label>
             </div>
